@@ -74,22 +74,12 @@ histogram <- function(data=NULL,
 
 
 
-  if(interactive==FALSE){
 
     ls <- list()
     ls[['plot']] <- p
     ls[['code']] <- code
     return(ls)
 
-  } else {
 
-    p1 <- ggplotly(p)
-    ls <- list()
-    ls[['plot']] <- p1
-    ls[['code']] <- code
-    return(ls)
-
-
-  }
 
 }

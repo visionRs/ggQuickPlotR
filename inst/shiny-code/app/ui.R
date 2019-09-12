@@ -294,7 +294,7 @@ ui <- dashboardPage(
                         icon = icon("sliders"),
                         block = TRUE
                       )),
-                      withSpinner(uiOutput('ui',height='650px'),color = '#3c8dbc'),
+                      withSpinner(plotOutput('plot',height='650px'),color = '#3c8dbc'),
                      # conditionalPanel(condition="input.interactive_plot==FALSE",
                      #                   withSpinner(plotOutput('plot',height = '650px'),color = '#3c8dbc')),
                      # conditionalPanel(condition="input.interactive_plot==TRUE",

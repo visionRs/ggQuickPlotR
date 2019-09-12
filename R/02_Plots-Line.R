@@ -82,25 +82,13 @@ line_plot <- function(data=dt,
     }
   }
 
-  if(interactive==FALSE){
 
-    print("I am in Non-Interactive")
     ls <- list()
     ls[['plot']] <- p
     ls[['code']] <- code
     return(ls)
 
-  } else {
-    print("I am in Interactive")
 
-    p1 <- ggplotly(p)
-    ls <- list()
-    ls[['plot']] <- p1
-    ls[['code']] <- code
-    return(ls)
-
-
-  }
 
 
 

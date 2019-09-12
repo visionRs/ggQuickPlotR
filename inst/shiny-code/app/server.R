@@ -645,34 +645,19 @@ server = function(input, output, session) {
 
   #5. Final RenderPlot Code for GGPLOT----------------------
 
-  observeEvent(c(input$interactive_plot),{
 
-    if(input$interactive_plot==FALSE){
 
-      output$plot <- renderPlot({
+    output$plot <- renderPlot({
         if (is.null(list_both$plot)) return()
         isolate({
           list_both$plot
         })
       })
-      output$ui <- renderUI({
-        plotOutput("plot",height='650px')
-      })
 
 
-    } else {
-      output$plot2 <- renderPlotly({
-        if (is.null(list_both$plot)) return()
-        isolate({
-          list_both$plot
-        })
-      })
-      output$ui <- renderUI({
-        plotlyOutput("plot2",height='650px')
-      })
-    }
 
-  })
+
+
 
 
   #6. Final RenderText Code for GGPLOT----------------------
