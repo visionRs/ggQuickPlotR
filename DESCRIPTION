@@ -1,0 +1,32 @@
+Package: ggQuickPlotR
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Author: Authors@R: person("Rushabh", "Patel", email = "rushabhpatel5@gmail.com",
+  role = c("aut", "cre"))
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Depends:
+    shiny,
+    shinydashboard,
+    shinyWidgets,
+    shinyFiles,
+    shinycssloaders,
+    htmltools,
+    ggplot2,
+    R.utils,
+    dplyr,
+    tidyverse,
+    colourpicker,
+    ggpubr,
+    rclipboard,
+    highcharter,
+    shinyjs,
+    V8,
+    ggplot2,
+    plotly
+RoxygenNote: 6.1.1
