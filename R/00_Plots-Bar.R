@@ -9,15 +9,7 @@
 #' @param legendPos character- Adjust Legend position (defaults to right)
 #' @param title_x character- Set x axis title.
 #' @param title_y character- Set y axis title.
-#' @param colourfill character- Hexcode or RGB color code for plot (defaults to #00FF0080)
 #' @param plotTitle character- Set plot title.
-#' @param facetRow character- facet column name, if faceted by Row
-#' @param facetCol character- facet column name, if faceted by Column
-#' @param hideAxis Logical - If we want to hide x Axis labels. (default: FALSE)
-#' @param axisAngle Numeric- change x tick labels angle. (default: 90)
-#' @param position character- Three Choice Stack, Fill, Dodge (Default: Stack)
-#' @param coorflip Logical- Flip Coordinates (Defaults: FALSE)
-#' @param interactive Logical- Convert to interactive plot (Defaults:FALSE)
 #' @return returns H2OFrame
 #' @export
 
@@ -31,13 +23,13 @@ bar_plot <- function(data=NULL,
                      df_name=NULL,
                      x=NULL,
                      y=NULL,
-                     colorby="None",
+                     colorby='None',
                      Theme=NULL,
                      fontSize=10,
                      legendPos='right',
                      title_x='',
                      title_y='',
-                     colourfill='#00FF0080',
+                     colourfill='#2219CCCC',
                      plotTitle='',
                      facetRow,
                      facetCol,
@@ -45,12 +37,13 @@ bar_plot <- function(data=NULL,
                      axisAngle=90,
                      position='',
                      coorflip=FALSE,
-                     interactive=FALSE) {
+                     interactive) {
 
 
-
-
-  p <- ggplot(data, aes_string(x, y, fill =ifelse(colorby == 'None', shQuote("None"), colorby) )) +
+  p <-
+    {if(colorby == 'None'){ggplot(data,aes_string(x, y, fill =shQuote("None")))}
+      else {ggplot(data,aes_string(x, y, fill = colorby )) }
+    }+
     geom_bar(stat="identity" , position = position) + #if(position=='') {} else { paste0(',', position = position)} ) +
     eval(parse(text=as.character(Theme))) +
     labs(title = plotTitle) +
@@ -69,6 +62,11 @@ bar_plot <- function(data=NULL,
           axis.text.x = if(hideAxis==TRUE) element_blank() else element_text(angle =axisAngle,hjust = 1))
 
 
+  # if(colorby=='None'){
+  #
+  #   p <- p + scale_fill_manual(values = colourfill)
+  # }
+  #
 
 
   code <-HTML(paste0('<pre>ggplot(data = ',df_name, ' , aes(x=', x, ', y=', y, ifelse(colorby=="None",")) + <br> ",paste0(',' ,'fill = ',colorby, ')) + <br>')),
@@ -82,7 +80,7 @@ bar_plot <- function(data=NULL,
                                    paste0(' &emsp; &emsp; &emsp; axis.title.x = element_text(size = ', fontSize,'),<br>'),
                                    paste0(' &emsp; &emsp; &emsp; axis.title.y = element_text(size = ', fontSize,'),<br>'),
                                    paste0(' &emsp; &emsp; &emsp; plot.title = element_text(size = ',fontSize,'),<br>'),
-                                   paste0(' &emsp; &emsp; &emsp; legend.position = ','"',legendPos,'"',')<br>'),
+                                   paste0(' &emsp; &emsp; &emsp; legend.position = ','"',legendPos,'"',', <br>'),
                                    paste0(' &emsp; &emsp; &emsp; axis.text.x = ', ifelse(hideAxis, 'element_blank())', paste0('element_text(angle = ', axisAngle, ', hjust = 1))')))
 
                             )
@@ -92,20 +90,57 @@ bar_plot <- function(data=NULL,
                      ifelse(facetRow != 'None' & facetCol == 'None',paste0('+ <br> facet_grid(',facetRow,' ~ .) '),'' ),
                      ifelse(facetRow == 'None' & facetCol != 'None',paste0('+ <br> facet_grid(. ~ ',facetCol,') ') ,''),
                      ifelse(coorflip==TRUE, paste0('+ <br> coord_flip()'),paste0('')),
+                     ifelse(interactive == TRUE, paste0(' %>% ggplotly()'), paste0('')),
                      '</pre>'))
 
 
+  # # facet
+  # if(facetRow != 'None' & facetCol != 'None'){
+  #   p <-  p + facet_grid(as.formula(paste0(facetRow, "~", facetCol)))
+  #   #code <- paste0(code,'+ facet_grid(',facetRow,' ~ ',facetCol,')')
+  # }
+  # if(facetRow != 'None' & facetCol == 'None'){
+  #   p <-  p + facet_grid(as.formula(paste0(facetRow, "~ .")))
+  #  # code <- paste0(code,'+ facet_grid(',facetRow,' ~ .)')
+  # }
+  # if(facetRow == 'None' & facetCol != 'None'){
+  #   p <-  p + facet_grid(as.formula(paste0(". ~", facetCol)))
+  #   #code <- paste0(code,'+ facet_grid(. ~ ',facetCol,')')
+  # }
+  #
+
+  #p <- p + ifelse(hideAxis==TRUE, theme(axis.text.x =element_blank()), theme(axis.text.x=element_text(angle = axisAngle, hjust = 1)))
+  #code <- paste0(code, " + " ,ifelse(hideAxis==TRUE, 'theme(axis.text.x =element_blank())', 'theme(axis.text.x=element_text(angle = axisAngle, hjust = 1))'))
+  # if(hideAxis == TRUE ){
+  #   p <-  p + theme(axis.text.x = element_blank())
+  #   code <- paste0(code, '+ theme(axis.text.x = element_blank())',hideAxis)
+  # } else if (axisAngle > 0 & hideAxis==FALSE) {
+  #
+  #   p <-  p + theme(axis.text.x = element_text(angle = axisAngle, hjust = 1))
+  #   code <- paste0(code, '+ theme(axis.text.x = element_text(angle = ', axisAngle, ', hjust = 1))')
+  # }
+
+  # if(axisAngle > 0){
+  #   p <-  p + theme(axis.text.x = element_text(angle = axisAngle, hjust = 1))
+  #   code <- paste0(code, '+ theme(axis.text.x = element_text(angle = ', axisAngle, ', hjust = 1))')
+  # }
+  #
+
+  # if(hideAxis == TRUE){
+  #   p <-  p + theme(axis.text.x = element_blank())
+  #   #code <- paste0(code, '+ theme(axis.text.x = element_blank())')
+  # } else{
+  #   if(axisAngle > 0){
+  #     p <-  p + theme(axis.text.x = element_text(angle = axisAngle, hjust = 1))
+  #    # code <- paste0(code, '+ theme(axis.text.x = element_text(angle = ', axisAngle, ', hjust = 1))')
+  #   }
+  # }
+  #
 
 
-
-
-      print("I am in Non-Interactive")
-      ls <- list()
-      ls[['plot']] <- p
-      ls[['code']] <- code
-      return(ls)
-
-
-
+  ls <- list()
+  ls[['plot']] <- p
+  ls[['code']] <- code
+  return(ls)
 
 } #function ends here

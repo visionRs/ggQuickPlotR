@@ -3,7 +3,7 @@ histogram <- function(data=NULL,
                       x=NULL,
                       Theme=NULL,
                       fontSize=10,
-                      colourfill = '#00FF0080',
+                      colourfill = '#2219CCCC',
                       colorby = 'None',
                       legendPos = 'right',
                       title_x='',
@@ -74,12 +74,9 @@ histogram <- function(data=NULL,
 
 
 
-
-    ls <- list()
-    ls[['plot']] <- p
-    ls[['code']] <- code
-    return(ls)
-
-
+  ls <- list()
+  ls[['plot']] <- p
+  ls[['code']] <- code
+  return(ls)
 
 }

@@ -12,11 +12,11 @@ QuickPlot <- function(data = NULL,
   # )
 
   if (viewer == "browser") {
-    inviewer <- browserViewer(browser = getOption("browser"))
+    inviewer <- shiny::browserViewer(browser = getOption("browser"))
   } else if (viewer == "pane") {
-    inviewer <- paneViewer(minHeight = "maximize")
+    inviewer <- shiny::paneViewer(minHeight = "maximize")
   } else {
-    inviewer <- dialogViewer(
+    inviewer <- shiny::dialogViewer(
       "ggQuickPlot",width=1350,height=1000
 
     )

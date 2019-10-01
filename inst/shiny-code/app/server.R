@@ -13,6 +13,8 @@ server = function(input, output, session) {
     shinyjs::js$refresh()
   })
 
+
+
   #___3.1 SERVER: UPDATE Button Logic--------------
 
   rv <- reactiveValues(last_btn = character())
@@ -108,6 +110,11 @@ server = function(input, output, session) {
     shapeby.choices <-  c(names(data())[ sapply(data(), is.factor)],  'None')
     updateSelectInput(session, inputId = "shapeBy", choices=shapeby.choices, selected = 'None')
 
+
+    # update plot parameter dropdowns
+    colorby.choices <- append(colnames(data()),'None')
+    updateSelectInput(session, inputId = "colorby", choices=colorby.choices,selected = 'None')
+
     # # update facet row and col selectInputs (only factor vars)
     # facet.choices <- c(names(data())[ sapply(data(), is.factor)],  'None')
     # updateSelectInput(session, inputId = "selectFacetRow", choices=facet.choices, selected = 'None')
@@ -122,25 +129,25 @@ server = function(input, output, session) {
     shinyjs::enable('facetRow')
     shinyjs::enable('facetCol')
 
-   if(length(names(data())[ sapply(data(), is.factor)]) == 1){ # if only 1 factor variable present
+    if(length(names(data())[ sapply(data(), is.factor)]) == 1){ # if only 1 factor variable present
 
-     if(input$facetRow == 1 & input$facetCol == 0){
-       shinyjs::enable('facetRow')
-       shinyjs::disable('facetCol')
-       updateSelectInput(session, inputId = "selectFacetRow", choices=facet.choices, selected = 'None')
+      if(input$facetRow == 1 & input$facetCol == 0){
+        shinyjs::enable('facetRow')
+        shinyjs::disable('facetCol')
+        updateSelectInput(session, inputId = "selectFacetRow", choices=facet.choices, selected = 'None')
 
-     } else if(input$facetRow == 0 & input$facetCol == 1){
-       shinyjs::disable('facetRow')
-       shinyjs::enable('facetCol')
-       updateSelectInput(session, inputId = "selectFacetCol", choices=facet.choices, selected = 'None')
+      } else if(input$facetRow == 0 & input$facetCol == 1){
+        shinyjs::disable('facetRow')
+        shinyjs::enable('facetCol')
+        updateSelectInput(session, inputId = "selectFacetCol", choices=facet.choices, selected = 'None')
 
-     }
-   } else { # if more than 1 factor variables present; populate both dropdowns
-       shinyjs::enable('facetRow')
-       shinyjs::enable('facetCol')
-       updateSelectInput(session, inputId = "selectFacetRow", choices=facet.choices, selected = 'None')
-       updateSelectInput(session, inputId = "selectFacetCol", choices=facet.choices, selected = 'None')
-   }
+      }
+    } else { # if more than 1 factor variables present; populate both dropdowns
+      shinyjs::enable('facetRow')
+      shinyjs::enable('facetCol')
+      updateSelectInput(session, inputId = "selectFacetRow", choices=facet.choices, selected = 'None')
+      updateSelectInput(session, inputId = "selectFacetCol", choices=facet.choices, selected = 'None')
+    }
 
   })
 
@@ -156,13 +163,13 @@ server = function(input, output, session) {
       shinyjs::disable("colorby")
       shinyjs::disable("position_input")
 
-      }
+    }
     else
-      {
+    {
       shinyjs::enable("colorby")
       shinyjs::enable("position_input")
 
-      }
+    }
 
   })
 
@@ -267,9 +274,6 @@ server = function(input, output, session) {
       rv$last_btn = "Bar"
     }
 
-    # update plot parameter dropdowns
-    colorby.choices <- append(colnames(data()),'None')
-    updateSelectInput(session, inputId = "colorby", choices=colorby.choices, selected = 'None')
 
 
     #______4.0.0 HIDE/SHOW Specific Parameters:------------------------
@@ -283,7 +287,7 @@ server = function(input, output, session) {
     shinyjs::hide("hist_extra_params")
 
     #________4.0.0.2 Showing Bar specific advance options
-    shinyjs::show("barplot_extra_param")
+    shinyjs::show("bar_extra_params")
 
 
 
@@ -308,8 +312,9 @@ server = function(input, output, session) {
                                facetRow = if(input$facetRow != 1){'None'}else{input$selectFacetRow},
                                facetCol = if(input$facetCol != 1){'None'}else{input$selectFacetCol},
                                position = input$position_input,
-                               coorflip =input$coorflip_input
-                               )$plot
+                               coorflip =input$coorflip_input,
+                               interactive = input$interact
+    )$plot
 
 
     #______4.0.2 GGPLOT Code--------------------
@@ -331,8 +336,9 @@ server = function(input, output, session) {
                facetRow = if(input$facetRow != 1){'None'}else{input$selectFacetRow},
                facetCol = if(input$facetCol != 1){'None'}else{input$selectFacetCol},
                position = input$position_input,
-               coorflip =input$coorflip_input
-               )$code
+               coorflip =input$coorflip_input,
+               interactive = input$interact
+      )$code
 
 
 
@@ -353,13 +359,8 @@ server = function(input, output, session) {
 
 
 
-
-    # update plot parameter dropdowns
-    colorby.choices <- append(colnames(data()),'None')
-    updateSelectInput(session, inputId = "colorby", choices=colorby.choices, selected = 'None')
-
     #________4.1.0.1 hiding scatter specific advance options
-    shinyjs::hide("barplot_extra_param")
+    shinyjs::hide("bar_extra_params")
     shinyjs::hide("lineplot_extra_param")
     shinyjs::hide("dotLine")
     shinyjs::hide("lineSize")
@@ -391,7 +392,7 @@ server = function(input, output, session) {
                 density_fill=input$density_fill,
                 alpha=input$alpha_input
 
-                )$plot
+      )$plot
 
 
 
@@ -420,7 +421,7 @@ server = function(input, output, session) {
                 alpha=input$alpha_input
 
 
-                )$code
+      )$code
 
 
 
@@ -438,12 +439,10 @@ server = function(input, output, session) {
       rv$last_btn = "Scatter"
     }
 
-    # update plot parameter dropdowns
-    colorby.choices <- append(colnames(data()),'None')
-    updateSelectInput(session, inputId = "colorby", choices=colorby.choices, selected = 'None')
+
 
     #________4.2.0.1 hiding scatter specific advance options
-    shinyjs::hide("barplot_extra_param")
+    shinyjs::hide("bar_extra_params")
     shinyjs::hide("lineplot_extra_param")
     shinyjs::hide("dotLine")
     shinyjs::hide("lineSize")
@@ -455,9 +454,9 @@ server = function(input, output, session) {
     #______4.2.0 Plot Code--------------------
     list_both$plot <-
       scatter_plot(data = data(),
+                   df_name = if(input$tableName=='None'){"NULL"} else{input$tableName},
                    x=input$selectX,
                    y=input$selectY,
-                   df_name = if(input$tableName=='None'){"NULL"} else{input$tableName},
                    Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
                    plotTitle = input$titleTextBox,
                    colourfill = input$colfill,
@@ -515,13 +514,11 @@ server = function(input, output, session) {
       rv$last_btn = "Line"
     }
 
-    # update plot parameter dropdowns
-    colorby.choices <- append(colnames(data()),'None')
-    updateSelectInput(session, inputId = "colorby", choices=colorby.choices, selected = 'None')
+
 
     #________4.3.0.1 hiding Line specific advance options
     shinyjs::hide("addJitter")
-    shinyjs::hide("barplot_extra_param")
+    shinyjs::hide("bar_extra_params")
     shinyjs::hide("scatter_extra_params")
     shinyjs::hide("hist_extra_param")
 
@@ -533,6 +530,7 @@ server = function(input, output, session) {
     #______4.3.0 Plot Code--------------------
     list_both$plot <-
       line_plot(data = data(),
+                df_name = if(input$tableName=='None'){"NULL"} else{input$tableName},
                 x=input$selectX,
                 y=input$selectY,
                 Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
@@ -555,6 +553,7 @@ server = function(input, output, session) {
     #______4.3.1 GGPLOT Code--------------------
     list_both$code <-
       line_plot(data = data(),
+                df_name = if(input$tableName=='None'){"NULL"} else{input$tableName},
                 x=input$selectX,
                 y=input$selectY,
                 Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
@@ -585,13 +584,10 @@ server = function(input, output, session) {
     }
 
 
-    # update plot parameter dropdowns
-    colorby.choices <- c(names(data())[ sapply(data(), is.factor)],  'None')
-    updateSelectInput(session, inputId = "colorby", choices=colorby.choices, selected = 'None')
 
 
     #________4.4.0.1 hiding specific advance options
-    shinyjs::hide("barplot_extra_param")
+    shinyjs::hide("bar_extra_params")
     shinyjs::hide("lineplot_extra_param")
     shinyjs::hide("dotLine")
     shinyjs::hide("lineSize")
@@ -604,65 +600,121 @@ server = function(input, output, session) {
     #______4.4.0 Plot Code--------------------
     list_both$plot <-
       box_plot(data = data(),
-                x=input$selectX,
-                y=input$selectY,
-                 plotTitle = input$titleTextBox,
-                 Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
-                 colourfill  = input$colfill,
-                 colorby = input$colorby,
-                 fontSize = input$axisFont,
-                 legendPos = input$legendPosition,
-                 title_x = input$titleX,
-                 title_y = input$titleY,
-                 jitter = input$addJitter,
-                 hideAxis = input$hideAxisLabels,
-                 axisAngle = input$axisLabelAngle,
-                 facetRow = if(input$facetRow != 1){'None'}else{input$selectFacetRow},
-                 facetCol = if(input$facetCol != 1){'None'}else{input$selectFacetCol})$plot
+               df_name = if(input$tableName=='None'){"NULL"} else{input$tableName},
+               x=input$selectX,
+               y=input$selectY,
+               plotTitle = input$titleTextBox,
+               Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
+               colourfill  = input$colfill,
+               colorby = input$colorby,
+               fontSize = input$axisFont,
+               legendPos = input$legendPosition,
+               title_x = input$titleX,
+               title_y = input$titleY,
+               jitter = input$addJitter,
+               hideAxis = input$hideAxisLabels,
+               axisAngle = input$axisLabelAngle,
+               facetRow = if(input$facetRow != 1){'None'}else{input$selectFacetRow},
+               facetCol = if(input$facetCol != 1){'None'}else{input$selectFacetCol})$plot
 
 
     #______4.4.1 GGPLOT Code--------------------
     list_both$code <-
       box_plot(data = data(),
-                x=input$selectX,
-                y=input$selectY,
-                 plotTitle = input$titleTextBox,
-                 Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
-                 colourfill  = input$colfill,
-                 colorby = input$colorby,
-                 fontSize = input$axisFont,
-                 legendPos = input$legendPosition,
-                 title_x = input$titleX,
-                 title_y = input$titleY,
-                 jitter = input$addJitter,
-                 hideAxis = input$hideAxisLabels,
-                 axisAngle = input$axisLabelAngle,
-                 facetRow = if(input$facetRow != 1){'None'}else{input$selectFacetRow},
-                 facetCol = if(input$facetCol != 1){'None'}else{input$selectFacetCol})$code
+               df_name = if(input$tableName=='None'){"NULL"} else{input$tableName},
+               x=input$selectX,
+               y=input$selectY,
+               plotTitle = input$titleTextBox,
+               Theme = if(input$themeSelect=='None'){"NULL"} else{input$themeSelect},
+               colourfill  = input$colfill,
+               colorby = input$colorby,
+               fontSize = input$axisFont,
+               legendPos = input$legendPosition,
+               title_x = input$titleX,
+               title_y = input$titleY,
+               jitter = input$addJitter,
+               hideAxis = input$hideAxisLabels,
+               axisAngle = input$axisLabelAngle,
+               facetRow = if(input$facetRow != 1){'None'}else{input$selectFacetRow},
+               facetCol = if(input$facetCol != 1){'None'}else{input$selectFacetCol})$code
 
   })
 
 
   #5. Final RenderPlot Code for GGPLOT----------------------
+  # output$plot <- renderPlot({
+  #   if (is.null(list_both$plot)) return()
+  #   isolate({
+  #     list_both$plot
+  #   })
+  # })
+  #
+
+  plot_f <- function(){
+    if (is.null(list_both$plot)) return()
+    isolate({
+      list_both$plot
+    })
+  }
+  output$plot <- renderPlot({
+    plot_f()
+  })
 
 
 
-    output$plot <- renderPlot({
-        if (is.null(list_both$plot)) return()
-        isolate({
-          list_both$plot
-        })
-      })
+  plotly_f <- function(){
+    if (is.null(list_both$plot)) return()
+    isolate({
+      ggplotly(list_both$plot)
+
+    })
+  }
+  output$plotly <- renderPlotly({
+    plotly_f()
+  })
 
 
 
+  # output$plotly <- renderPlotly({
+  #   if (is.null(list_both$plot)) return()
+  #   isolate({
+  #      ggplotly(list_both$plot)
+  #
+  #   })
+  # })
+  #
 
+
+  output$png = downloadHandler(
+    filename = 'plot.png',
+    content = function(file) {
+      device <- function(..., width, height) {
+        grDevices::png(..., width = width, height = height,
+                       res = 300, units = "in")
+      }
+      if(input$interact==T){
+        ggsave(file, plot = plotly_f(), device = device)
+
+      } else {
+
+        ggsave(file, plot = plot_f(), device = device)
+
+      }
+    })
 
 
 
   #6. Final RenderText Code for GGPLOT----------------------
   output$clip <- renderUI({
-    rclipButton("clipbtn", "Copy", list_both$code, icon("clipboard"))
+    cleanFun <- function(htmlString) {
+      text <- gsub("<.*?>", "", htmlString)
+      text <- gsub('&emsp;','',text)
+      text <- gsub('&ensp;','',text)
+
+      return(text)
+    }
+
+    rclipButton("clipbtn", "Copy", cleanFun(list_both$code), icon("clipboard"))
 
   })
 
@@ -674,7 +726,6 @@ server = function(input, output, session) {
       list_both$code
     })
   })
-
 
 
 } # server ends here

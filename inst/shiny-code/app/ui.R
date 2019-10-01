@@ -1,27 +1,27 @@
 # UI script
-# library(shiny)
-# library(shinydashboard)
-# library(shinyWidgets)
-# library(shinyFiles)
-# library(shinycssloaders)
-# library(htmltools)
-# library(ggplot2)
-# library(R.utils)
-# library(dplyr)
-# library(tidyverse)
-# library(colourpicker)
-# library(ggpubr)
-# library(rclipboard)
-# library(highcharter)
-
+library(shiny)
+library(shinydashboard)
+library(shinyWidgets)
+library(shinyFiles)
+library(shinycssloaders)
+library(htmltools)
+library(ggplot2)
+library(R.utils)
+library(dplyr)
+library(tidyverse)
+library(colourpicker)
+library(ggpubr)
+library(rclipboard)
+library(highcharter)
+library(plotly)
 ui <- dashboardPage(
   # 1. HEADER here----
-  dashboardHeader(title = "ggQuickPlot",
-                  titleWidth = 300,
-                  dropdownActionMenu(id="menu-drpdwn",title= "",icon = icon("chevron-circle-down"),
-                                     actionItem("refresh1",tags$p(tags$i(class="fa fa-refresh fa-spin",style="font-size:12px"),HTML("&nbsp;")," Reload Data")),
-                                     actionItem("github","Report Issue" ,icon = icon("exclamation-triangle"),onclick_event = "window.open('https://github.com/easy-plot/app/issues', '_blank')")
-                  )
+  dashboardHeader(disable = T#title = "ggQuickPlot",
+                  # titleWidth = 300,
+                  # dropdownActionMenu(id="menu-drpdwn",title= "",icon = icon("chevron-circle-down"),
+                  #                    actionItem("refresh1",tags$p(tags$i(class="fa fa-refresh fa-spin",style="font-size:12px"),HTML("&nbsp;")," Reload Data")),
+                  #                    actionItem("github","Report Issue" ,icon = icon("exclamation-triangle"),onclick_event = "window.open('https://github.com/easy-plot/app/issues', '_blank')")
+                  # )
                   # tags$li(id="refresh1",a(onclick = "window.location.href=window.location.href",
                   #                         href = NULL,
                   #                         tags$p(tags$i(class="fa fa-refresh fa-spin",style="font-size:18px"),HTML("&nbsp;")," Reload Data"),
@@ -49,17 +49,10 @@ ui <- dashboardPage(
 
   # 3. BODY here----
   dashboardBody(
-    #tags$head(includeCSS("ggQuickPlotR/www/template.css")),
-
-    includeCSS(system.file("www", "template.css", package = "ggQuickPlotR")),
+    includeCSS(system.file("www",'template.css' ,package = "ggQuickPlotR")),
     shinyjs::useShinyjs(),
     rclipboardSetup(),
-    tags$head(tags$script(HTML("$('iframe').load( function() {
-      $('iframe').contents().find(\"head\")
-      .append($('<style type=\"text/css\">  .gwt-Frame GM1BXT-CIO{height:1000px;
-  width:1200px;}  </style>'));
-    });"))),
-    #singleton(x = tags$link(rel="stylesheet", type="text/css", href="ggQuickPlotR/template.css")),
+
     tags$head(tags$script(HTML("$(document).on('click', '.needed', function () {
                                 Shiny.onInputChange('last_btn',this.id);
                                });"))),
@@ -93,7 +86,7 @@ ui <- dashboardPage(
                   circle = FALSE,
                   margin = '1px',
                   colourpicker::colourInput("colfill", "Color fill", "#2219CCCC", allowTransparent = TRUE),
-                  selectInput(inputId = 'colorby', label = 'Color by', choices = c('None')),
+                  selectInput(inputId = 'colorby', label = 'Color by', choices = c('None'),selected = 'None'),
                   selectInput(inputId = 'themeSelect', label = 'Choose Theme', choices = c('None'="NULL",
                                                                                            'theme_bw()',
                                                                                            'theme_gray()',
@@ -169,12 +162,12 @@ ui <- dashboardPage(
                                circle = FALSE,
                                conditionalPanel(condition = "input.Bar",
                                                 box(id = 'bar_extra_params', width =12,
-                                                selectInput(inputId = "position_input",
-                                                            label = "Position",
-                                                            choices = c('fill',"dodge","stack"),selected = 'stack'),
-                                                checkboxInput(inputId='coorflip_input','CoordFlip',value = FALSE)
+                                                    selectInput(inputId = "position_input",
+                                                                label = "Position",
+                                                                choices = c('fill',"dodge","stack"),selected = 'stack'),
+                                                    checkboxInput(inputId='coorflip_input','CoordFlip',value = FALSE)
 
-                               )),
+                                                )),
                                conditionalPanel(condition = "input.Histogram",
                                                 box(id = 'hist_extra_params', width =12,
                                                     selectInput(inputId = "position_input",
@@ -187,7 +180,7 @@ ui <- dashboardPage(
                                                                                  label = "Density Fill Column",
                                                                                  choices = 'None'
                                                                      ),
-                                                                     sliderInput(inputId="alpha_input",label = 'Alpha',value = 0.5,min=0,max=1,step=0.01)
+                                                                     numericInput(inputId="alpha_input",label = 'Alpha',value = 0.5,min=0,max=1)
                                                     )
 
                                                 )
@@ -211,11 +204,11 @@ ui <- dashboardPage(
                                ),# end of input.scatter conditional panel
                                conditionalPanel(condition = "input.Line",
                                                 selectInput(inputId = 'lineplot_extra_param', label = 'Line type', choices = c('solid',
-                                                                                                                              'twodash',
-                                                                                                                              'longdash',
-                                                                                                                              'dotted',
-                                                                                                                              'dotdash',
-                                                                                                                              'dashed'), selected = 'solid'),
+                                                                                                                               'twodash',
+                                                                                                                               'longdash',
+                                                                                                                               'dotted',
+                                                                                                                               'dotdash',
+                                                                                                                               'dashed'), selected = 'solid'),
                                                 checkboxInput(inputId ="dotLine", "Add Points to plot", value = FALSE),
                                                 sliderInput(inputId = 'lineSize', label = 'Line Size', value = 1, min = 0, max = 5, step = 0.5)
                                ),
@@ -268,7 +261,7 @@ ui <- dashboardPage(
 
                       #__3.3 interactive or no?------------
                       materialSwitch(
-                        inputId = "interactive_plot",
+                        inputId = "interact",
                         label = "Interactive plot",
                         status = "primary",
                         right=T
@@ -276,9 +269,10 @@ ui <- dashboardPage(
                       ),
 
                       htmlOutput('code'),
-                      uiOutput("clip")
+                      uiOutput("clip"),
+                      downloadButton('png')
 
-                      )
+                  )
 
               ),
 
@@ -294,11 +288,18 @@ ui <- dashboardPage(
                         icon = icon("sliders"),
                         block = TRUE
                       )),
-                      withSpinner(plotOutput('plot',height='650px'),color = '#3c8dbc'),
-                     # conditionalPanel(condition="input.interactive_plot==FALSE",
-                     #                   withSpinner(plotOutput('plot',height = '650px'),color = '#3c8dbc')),
-                     # conditionalPanel(condition="input.interactive_plot==TRUE",
-                     #                   withSpinner(plotlyOutput('plot2',height = '650px'),color = '#3c8dbc')),
+                      #withSpinner(plotOutput('plot',height = '650px'),color = '#3c8dbc'),
+
+                      conditionalPanel(
+                        condition = 'input.interact == true',
+                        withSpinner(plotlyOutput('plotly',height = '650px'),color = '#3c8dbc')
+                      ),
+
+                      conditionalPanel(
+                        condition = 'input.interact == false',
+                        withSpinner(plotOutput('plot',height = '650px'),color = '#3c8dbc')
+                      ),
+
                       value = 'plot6',status = "primary"
 
                   ) # end of tabBox
