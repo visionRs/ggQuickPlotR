@@ -1,5 +1,5 @@
 # ggQuickPlotR <img src="https://github.com/visionRs/ggQuickPlotR/blob/master/hexsticker-f.png" width="180" height="200" align="right"/>
-> The purpose of this R library is to visualize your data on your tip without having any knowledge about ggplot. This application will generate R ggplot code for your desired plot. You also have a power to convert your plots to interactive.
+> The purpose of this R library is to visualize your data on your tip without having any knowledge about ggplot. This application will generate R ggplot code for your desired visualization. You also have a power to convert your plots to interactive.
 <br> 
 
 ## Installation
