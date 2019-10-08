@@ -12,5 +12,12 @@ devtools::install_github("visionRs/ggQuickPlotR")
 
 The application can be launched via RStudio console, if you don't have `data.frame` in your environment, datasets in `ggQuickPlotR` packges are used.
 
+Below function should be executed to launch this app.
+
+```r
+Quickplot()
+
+```
+
 
 <img src="https://github.com/visionRs/ggQuickPlotR/blob/master/ezgif.com-video-to-apng.png" width="1200" height="400" />
