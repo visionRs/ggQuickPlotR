@@ -21,3 +21,8 @@ Quickplot()
 
 
 <img src="https://github.com/visionRs/ggQuickPlotR/blob/master/ggQuickPlotR-Demo.gif" width="1200" height="500" />
+
+
+
+**Note: This installation may not work for some users. Its still under development.
+
