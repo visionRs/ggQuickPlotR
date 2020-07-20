@@ -11,7 +11,7 @@
 #' @param title_y character- Set y axis title.
 #' @param plotTitle character- Set plot title.
 #' @return returns H2OFrame
-#' @export
+#' @export 
 
 
 
